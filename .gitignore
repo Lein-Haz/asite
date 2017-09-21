@@ -1,34 +1,43 @@
-# Logs
-logs
-*.log
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# Coverage directory used by tools like istanbul
-coverage
-coverage_js
+# compiled output
+/dist
+/tmp
+/out-tsc
 
-# ignore documentation
-documentation
+# dependencies
+/node_modules
 
-# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
-.grunt
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# Compiled binary addons (http://nodejs.org/api/addons.html)
-build/Release
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
-# Dependency directory
-# Commenting this out is preferred by some people, see
-# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
-node_modules
-typings
-ts-node
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+yarn-error.log
 
-# Users Environment Variables
-.lock-wscript
-.tsdrc
-.typingsrc
+# e2e
+/e2e/*.js
+/e2e/*.map
 
-#IDE configuration files
-.idea
-
-# OS X trash files
+# System Files
 .DS_Store
+Thumbs.db

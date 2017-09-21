@@ -1,0 +1,9 @@
+md-list{
+  md-list-item{//bottom border
+    border-bottom: 1px solid black;
+    &:last-child{//except on last
+      border-bottom: none;
+    }
+  }
+}
+

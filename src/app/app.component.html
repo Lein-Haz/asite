@@ -1,0 +1,35 @@
+<div color="primary">
+  <md-sidenav-container class="content-body">
+    <md-sidenav #sidenav mode="over" class="app-sidenav">
+      <md-list (click)="sidenav.toggle()" class="nav-list">
+        <md-list-item>
+          <span>Its some words</span>
+        </md-list-item>
+
+        <md-list-item>
+          <span>Its words in the middle</span>
+        </md-list-item>
+
+        <md-list-item>
+          <span>Its some more words</span>
+        </md-list-item>
+
+      </md-list>
+    </md-sidenav>
+
+    <md-toolbar scroll color="primary">
+
+      <button md-button (click)="sidenav.toggle()" color="accent">
+        <i class="material-icons app-toolbar-menu">menu</i>
+      </button>
+
+    </md-toolbar>
+    <div>
+      <!--<router-outlet></router-outlet>-->
+    </div>
+
+
+
+  </md-sidenav-container>
+
+</div>

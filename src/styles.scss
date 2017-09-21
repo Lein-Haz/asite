@@ -1,0 +1,25 @@
+// import app theme
+@import './theme/app-theme';
+
+body{
+  background-color: mat-color($my-app-primary, 50);
+  margin: 0;
+}
+
+md-sidenav-container{
+  .mat-drawer-backdrop.mat-drawer-shown{
+    background-color: mat-color($my-app-primary, 200, .5);
+  }
+
+  md-list[class~="nav-list"]{
+    padding-top: 0;
+  }
+}
+
+.app-sidenav{
+  background-color: mat-color($my-app-primary, 600);
+}
+
+.content-body{
+  height: 100vh;
+}
