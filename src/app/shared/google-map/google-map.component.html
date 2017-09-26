@@ -1,17 +1,7 @@
 <div>
   <div #mymap id="mymap" class="map-wrapper">
   </div>
-  <div class="map-overlay">{{overLayText}}</div>
-
-  <div>
-    <button mat-raised-button (click)="doSomething()">
-      Do the thing
-    </button>
-  </div>
-
-  <div>
-    <button mat-raised-button (click)="getBnds()">
-      Get Bounds
-    </button>
+  <div *ngIf="showOverLay" class="map-overlay" fxFlexLayout="row" fxLayoutAlign="center center">
+    <div fxFlex.xs="80%" fxFlex.sm="75%" fxFlex.md="50%" fxFlex.lg="50%" class="overlay-text">{{overLayText}}</div>
   </div>
 </div>

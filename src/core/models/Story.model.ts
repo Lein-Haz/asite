@@ -1,11 +1,11 @@
 import {IStoryModel} from "./IStory.model";
 import {StoryStepModel} from "./StoryStep.model";
-import {MyLatLng} from "../../app/shared/google-map/mapModels/myLatLng";
+import {MyMarker} from "../../app/shared/google-map/mapModels/myMarker";
 
 export class StoryModel implements IStoryModel{
   text: string;
-  startLatLng: MyLatLng;
-  endLatLng: MyLatLng;
+  startMarker: MyMarker;
+  endMarker: MyMarker;
   steps: StoryStepModel[];
 
   constructor(text: string, steps: StoryStepModel[]){

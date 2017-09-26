@@ -1,0 +1,15 @@
+<div>
+  <google-map (mapInitializedEmitter)="mapInitHandler($event)" [showOverLay]="true" [overLayText]="overLayText" #gmap></google-map>
+
+  <span>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <button mat-raised-button (click)="doSomething()" color="primary">
+        Do the thing
+      </button>
+
+      <button mat-raised-button (click)="getBnds()">
+        Get Bounds
+      </button>
+    </div>
+  </span>
+</div>

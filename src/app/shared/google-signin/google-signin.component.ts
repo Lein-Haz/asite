@@ -15,6 +15,8 @@ export class GoogleSigninComponent implements AfterViewInit{
 
   private isSignedIn: boolean;
 
+  @Output() authInitializedEmitter: EventEmitter<any> = new EventEmitter();
+
   @Output()
   signedInState: EventEmitter<any> = new EventEmitter<Object>();
 
@@ -38,7 +40,7 @@ export class GoogleSigninComponent implements AfterViewInit{
       }else{
         this.buttonLabel = "Signin";
       }
-      this.signedInState.emit(this.buttonLabel);
+      this.signedInState.emit(this.isSignedIn);
       this.ref.detectChanges();
     });
   }
@@ -54,6 +56,8 @@ export class GoogleSigninComponent implements AfterViewInit{
 
       this.auth2.currentUser.get();
       this.subscribeSignInStatusListener();
+
+      this.authInitializedEmitter.emit(true);
 
       this.attachToComponent(this.element.nativeElement.firstChild);
     })

@@ -10,7 +10,7 @@ export class AuthService{
 
   constructor( private http: Http, private apiService: ApiService){ }
 
-  public login(){
+  private login(){
     const oauth2Endpoint = 'https://accounts.google.com/o/oauth2/v2/auth';
     const method = 'GET';
     let request = this.apiService.apiCall(oauth2Endpoint, method, this.getAuthParams(), null, this.apiService.getHeaders());
@@ -22,20 +22,25 @@ export class AuthService{
     });
   }
 
-  setAuth(auth2){
+  public logout(){
+    this.auth2.signOut().then(()=>{
+      console.log("Bye Felicia");
+    });
+  }
+
+  public setAuth(auth2){
     this.auth2 = auth2;
   }
 
-  getAuth(){
+  public getAuth(){
     return this.auth2;
   }
 
-  getCurrentUser(){
+  public getCurrentUser(){
     return this.auth2.currentUser.get();
   }
 
-
-  getAuthParams(){
+  private getAuthParams(){
     const SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
     const redirLocal = 'http://localhost:4200/oauthreturn';
     const redirReal = 'https://lein-haz.github.io/asite/oauthreturn';

@@ -11,6 +11,7 @@ import {MyMarker} from "../../app/shared/google-map/mapModels/myMarker";
 import {} from '@types/googlemaps';
 import SymbolPath = google.maps.SymbolPath;
 import spherical = google.maps.geometry.spherical
+import {ConstantService} from "./constant.service";
 
 
 @Injectable()
@@ -21,8 +22,9 @@ export class StoryService{
   public buildStoryFromConstant(storiesArray){
     let storyArray: StoryModel[] = [];
     for(let val of storiesArray){
-      let startLL = new MyLatLng(val.startLatLng.lat, val.startLatLng.lng);
-      let endLL = new MyLatLng(val.endLatLng.lat, val.endLatLng.lng);
+      let startLL = new MyLatLng(val.startMarker.lat, val.startMarker.lng);
+      let endLL = new MyLatLng(val.endMarker.lat, val.endMarker.lng);
+
       let pathArray = [startLL, endLL];
 
       let stepsArray: StoryStepModel[] = [];
@@ -41,30 +43,50 @@ export class StoryService{
         stepsArray.push(storyStep);
       }
       let aStory = new StoryModel(val.text, stepsArray);
+
+      aStory.startMarker = new MyMarker({
+        position: startLL
+      });
+      aStory.endMarker = new MyMarker({
+        position: endLL
+      });
+
       storyArray.push(aStory);
     }
     return storyArray;
   }
 
-  public handleAction(storyStep: StoryStepModel , map: MyMap){
+  public handleAction(storyStep: StoryStepModel , map: MyMap, story){
     let aRetThing: string;
     switch (storyStep.action){
-      case 0:
+      case ConstantService.MAP_ACTIONS.ADD_MARKER:
         aRetThing = "Add Mah-ka";
         this.addMarker(storyStep.latLng, map);
         break;
-      case 1:
+      case ConstantService.MAP_ACTIONS.ADD_START_MARKER:
+        aRetThing = "Add Mah-ka";
+        story.startMarker = this.addMarker(storyStep.latLng, map);
+        break;
+      case ConstantService.MAP_ACTIONS.ADD_END_MARKER:
+        aRetThing = "Add Mah-ka";
+        story.endMarker = this.addMarker(storyStep.latLng, map);
+        break;
+      case ConstantService.MAP_ACTIONS.FOCUS_PATH:
         aRetThing = "Focus Path";
         StoryService.panToPath(storyStep.path[0], storyStep.path[1], map);
         break;
-      case 2:
+      case ConstantService.MAP_ACTIONS.FOCUS_ADD_PATH:
         aRetThing = "Add Paff";
         StoryService.panToPath(storyStep.path[0], storyStep.path[1], map);
-        this.drawFilledPath(storyStep.path[0], storyStep.path[1], map);
+        this.drawFilledPath(storyStep.path[0], storyStep.path[1], map, story);
         break;
-      case 3:
+      case ConstantService.MAP_ACTIONS.FOCUS_BOUNDS:
         aRetThing = "Set bounds";
         StoryService.panToBounds(storyStep.bounds, map);
+        break;
+      case ConstantService.MAP_ACTIONS.ADD_PATH:
+        aRetThing = "Add path";
+        this.drawFilledPath(storyStep.path[0], storyStep.path[1], map, story);
         break;
       default:
         break;
@@ -79,16 +101,11 @@ export class StoryService{
       label: title,
       title: title,
       animation: google.maps.Animation.DROP,
-      icon: {
-        path: SymbolPath.CIRCLE,
-        scale: 15,
-        strokeColor: '#4C9CB7',
-        strokeWeight: 4
-      }
+      icon: ConstantService.ICON_SHAPES.ACTIVE_CIRCLE
     });
   }
 
-  drawFilledPath(startPoint: MyLatLng, endPoint: MyLatLng, map: MyMap){
+  drawFilledPath(startPoint: MyLatLng, endPoint: MyLatLng, map: MyMap, story: StoryModel){
     let lineSymbol = {
       path: SymbolPath.FORWARD_OPEN_ARROW,
       scale: 7,
@@ -98,7 +115,7 @@ export class StoryService{
     };
 
     let myLine = new MyPolyline({
-      strokeColor: '#000000',
+      strokeColor: '#C4E5E6',
       strokeOpacity: 0.1,
       strokeWeight: 2,
       map: map,
@@ -113,15 +130,16 @@ export class StoryService{
 
     });
 
-    this.fillPath(myLine, startPoint, endPoint, map);
+    this.fillPath(myLine, startPoint, endPoint, map, story);
   }
 
-  fillPath(line: MyPolyline, origin: MyLatLng, end: MyLatLng, map: MyMap){
+  fillPath(line: MyPolyline, origin: MyLatLng, end: MyLatLng, map: MyMap, story: StoryModel){
     let count = 0;
     let fillLine = new MyPolyline({
       strokeColor: '#FFB700',
       strokeOpacity: 1.0,
       strokeWeight: 5,
+      zIndex: 2,
       map: map,
       geodesic: true,
       path: [origin,origin],
@@ -138,14 +156,23 @@ export class StoryService{
 
       line.set('icons', icons);
 
+      //On first completion
       if(count == 0){
-        console.log(count);
-        console.log(icons[0].offset);
+        //console.log(count);
+        //console.log(icons[0].offset);
+
         line.set('icons', []);
         fillLine.set('strokeColor', '#4C9CB7');
+        fillLine.set('zIndex', 0);
+
         clearInterval(lineAnimate);
       }
     }, 15);
+  }
+
+  public closeStory(story: StoryModel){
+    story.startMarker.set('icon',ConstantService.ICON_SHAPES.INACTIVE_CIRCLE);
+    story.endMarker.set('icon',ConstantService.ICON_SHAPES.INACTIVE_CIRCLE);
   }
 
   static panToPath(startPoint: MyLatLng, endPoint: MyLatLng, map: MyMap){
@@ -155,6 +182,13 @@ export class StoryService{
 
   static panToBounds(bounds: MyLatLngBounds, map: MyMap){
     map.panToBounds(bounds);
+  }
+
+  static lockMap(map: MyMap){
+    map.set('gestureHandling','none');
+  }
+  static unlockMap(map: MyMap){
+    map.set('gestureHandling','auto');
   }
 
   public intervalSet(rounds: number): Observable<any>{

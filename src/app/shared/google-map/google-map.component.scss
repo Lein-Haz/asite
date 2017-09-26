@@ -1,12 +1,19 @@
 .map-wrapper{
   height: 60vh;
   width: 100%;
+  margin-bottom: 0.3em;
+
   & + .map-overlay{
     position: absolute;
-    top: 80px;
-    left: 600px;
-    padding: 1em;
-    border-radius: 0.3em;
-    background-color: rgba(43, 152, 171, 0.55);
+    top: 6em;
+    left: 0;
+    width: 100%;
   }
+}
+
+.overlay-text{
+  padding: 1em;
+  text-align: center;
+  border-radius: 0.3em;
+  background-color: rgba(43, 152, 171, 0.55);
 }

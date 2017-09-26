@@ -8,16 +8,21 @@
           </button>
         </mat-list-item>
 
-        <mat-list-item routerLink="oauth">
-          <a >Auth</a>
+        <!--<mat-list-item routerLink="oauthreturn">
+          <a >Auth return</a>
+        </mat-list-item>-->
+
+        <mat-list-item routerLink="home">
+          <a >Home</a>
         </mat-list-item>
 
-        <mat-list-item routerLink="oauthreturn">
-          <a>Auth ret</a>
-        </mat-list-item>
 
         <mat-list-item routerLink="about">
           <span>About</span>
+        </mat-list-item>
+
+        <mat-list-item *ngIf="isSignedIn" (click)="logout()">
+          <div>Logout</div>
         </mat-list-item>
 
       </mat-nav-list>
@@ -30,10 +35,15 @@
             <mat-icon>menu</mat-icon>
           </button>
 
+          <div fxFlex.gt-sm="20%" fxFlex.gt-md="15%" fxFlex.gt-lg="15%">
+            <span fxLayout="row" fxLayoutAlign="space-between center">
+              <google-signin (authInitializedEmitter)="authInitializedHandler($event)" (signedInState)="updateStatus($event)"></google-signin>
 
-          <button fxFlex="{{FLEX_LAYOUT.NO_GROW}}" mat-fab routerLink="/">
-            <mat-icon>home</mat-icon>
-          </button>
+              <button fxFlex="{{FLEX_LAYOUT.NO_GROW}}" mat-fab routerLink="/">
+                <mat-icon>home</mat-icon>
+              </button>
+            </span>
+          </div>
         </span>
       </mat-toolbar>
 
@@ -44,7 +54,7 @@
       </div>
 
       <div fxLayout="row" fxLayoutAlign="center center" class="app-content">
-        <div fxFlex.lt-md="100%" fxFlex.lt-lg="75%" fxFlex.lt-xl="66%">
+        <div fxFlex.xs="100%" fxFlex.sm="100%" fxFlex.md="75%" fxFlex.lg="75%" fxFlex.xl="66%">
           <router-outlet></router-outlet>
         </div>
       </div>
