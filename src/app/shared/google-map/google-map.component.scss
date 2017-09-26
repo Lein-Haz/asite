@@ -1,0 +1,12 @@
+.map-wrapper{
+  height: 60vh;
+  width: 100%;
+  & + .map-overlay{
+    position: absolute;
+    top: 80px;
+    left: 600px;
+    padding: 1em;
+    border-radius: 0.3em;
+    background-color: rgba(43, 152, 171, 0.55);
+  }
+}

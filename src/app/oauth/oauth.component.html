@@ -1,0 +1,18 @@
+<mat-card>
+
+  <div>
+    <google-signin (signedInState)="updateStatus($event)"></google-signin>
+  </div>
+
+  <div>
+    <button mat-raised-button (click)="doMeThing()">
+      Doit
+    </button>
+  </div>
+
+  <div>
+    <button mat-raised-button (click)="getOut()">
+      Just Sign out
+    </button>
+  </div>
+</mat-card>

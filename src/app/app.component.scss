@@ -1,9 +1,32 @@
-md-list{
-  md-list-item{//bottom border
-    border-bottom: 1px solid black;
-    &:last-child{//except on last
-      border-bottom: none;
-    }
+.app-content{
+  padding-top: 0.3em;
+}
+
+.body-content{
+  width: 100vw;
+  height: 1800px;
+}
+
+@media screen and (max-width: 599px) {
+  .body-content{
+    padding-top: 0;
   }
 }
 
+@media screen and (min-width: 600px) and (max-width: 959px) {
+  .body-content{
+    padding-top: 0;
+  }
+}
+
+@media screen and (min-width: 960px) and (max-width: 1279px) {
+  .body-content{
+    padding-top: 64px;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .body-content{
+    padding-top: 64px;
+  }
+}

@@ -6,20 +6,55 @@ body{
   margin: 0;
 }
 
-md-sidenav-container{
+.mat-sidenav-content,
+.mat-sidenav-container,
+.mat-drawer-content {
+  transform: none !important;
+}
+
+mat-sidenav-container{
   .mat-drawer-backdrop.mat-drawer-shown{
+    position: fixed;
+    top: 0;
+    left: 0;
     background-color: mat-color($my-app-primary, 200, .5);
   }
 
-  md-list[class~="nav-list"]{
-    padding-top: 0;
+  mat-nav-list{
+    mat-list-item{
+      width: 100%;
+      border-bottom: 1px solid black;//bottom border
+      &:last-child{
+        border-bottom: none;//except on last
+      }
+    }
+  }
+
+  .mobile-nav{
+    padding: 0.3em 0 0 1em;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+  }
+
+  mat-sidenav.mat-drawer{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 11;
+    background-color: mat-color($my-app-primary, 600);
   }
 }
 
-.app-sidenav{
-  background-color: mat-color($my-app-primary, 600);
-}
-
-.content-body{
-  height: 100vh;
+mat-toolbar.full-nav{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  .mat-toolbar-layout{
+    & span{
+      width: inherit;
+    }
+  }
 }

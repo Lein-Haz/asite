@@ -1,35 +1,56 @@
-<div color="primary">
-  <md-sidenav-container class="content-body">
-    <md-sidenav #sidenav mode="over" class="app-sidenav">
-      <md-list (click)="sidenav.toggle()" class="nav-list">
-        <md-list-item>
-          <span>Its some words</span>
-        </md-list-item>
+<div>
+  <mat-sidenav-container class="nav-drawer-container">
+    <mat-sidenav #sidenav mode="over" (click)="sidenav.toggle()">
+      <mat-nav-list fxLayout="column" fxLayoutAlign="space-between">
+        <mat-list-item>
+          <button mat-button color="accent">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+        </mat-list-item>
 
-        <md-list-item>
-          <span>Its words in the middle</span>
-        </md-list-item>
+        <mat-list-item routerLink="oauth">
+          <a >Auth</a>
+        </mat-list-item>
 
-        <md-list-item>
-          <span>Its some more words</span>
-        </md-list-item>
+        <mat-list-item routerLink="oauthreturn">
+          <a>Auth ret</a>
+        </mat-list-item>
 
-      </md-list>
-    </md-sidenav>
+        <mat-list-item routerLink="about">
+          <span>About</span>
+        </mat-list-item>
 
-    <md-toolbar scroll color="primary">
+      </mat-nav-list>
+    </mat-sidenav>
 
-      <button md-button (click)="sidenav.toggle()" color="accent">
-        <i class="material-icons app-toolbar-menu">menu</i>
-      </button>
+    <div class="body-content">
+      <mat-toolbar class="full-nav" fxShow.gt-md fxHide.lt-md color="primary">
+        <span fxLayout="row" fxLayoutAlign="space-between center">
+          <button fxFlex="{{FLEX_LAYOUT.NO_GROW}}" mat-button (click)="sidenav.toggle()" color="accent">
+            <mat-icon>menu</mat-icon>
+          </button>
 
-    </md-toolbar>
-    <div>
-      <!--<router-outlet></router-outlet>-->
+
+          <button fxFlex="{{FLEX_LAYOUT.NO_GROW}}" mat-fab routerLink="/">
+            <mat-icon>home</mat-icon>
+          </button>
+        </span>
+      </mat-toolbar>
+
+      <div fxShow.lt-md fxHide.gt-md class="mobile-nav">
+        <button mat-fab (click)="sidenav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </div>
+
+      <div fxLayout="row" fxLayoutAlign="center center" class="app-content">
+        <div fxFlex.lt-md="100%" fxFlex.lt-lg="75%" fxFlex.lt-xl="66%">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+
     </div>
 
-
-
-  </md-sidenav-container>
+  </mat-sidenav-container>
 
 </div>
