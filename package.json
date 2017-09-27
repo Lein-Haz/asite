@@ -8,7 +8,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "pwa": "ng build --prod --base-href \"https://Lein-Haz.github.io/asite/\" && sw-precache --root=dist --config=precache-config.js",
+    "ghpages": "angular-cli-ghpages"
   },
   "private": true,
   "dependencies": {
@@ -24,6 +26,7 @@
     "@angular/platform-browser": "4.4.3",
     "@angular/platform-browser-dynamic": "4.4.3",
     "@angular/router": "4.4.3",
+    "@angular/service-worker": "1.0.0-beta.16",
     "@types/gapi": "0.0.35",
     "@types/gapi.auth2": "0.0.44",
     "@types/googlemaps": "3.26.20",
@@ -48,6 +51,7 @@
     "karma-jasmine": "1.1.0",
     "karma-jasmine-html-reporter": "0.2.2",
     "protractor": "5.1.2",
+    "sw-precache-webpack-plugin": "0.11.4",
     "ts-node": "3.2.0",
     "tslint": "5.3.2",
     "typescript": "2.3.3"
