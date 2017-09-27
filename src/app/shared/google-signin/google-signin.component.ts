@@ -13,7 +13,7 @@ export class GoogleSigninComponent implements AfterViewInit{
 
   public buttonLabel: string = "Signin";
 
-  private isSignedIn: boolean;
+  public isSignedIn: boolean;
 
   @Output() authInitializedEmitter: EventEmitter<any> = new EventEmitter();
 

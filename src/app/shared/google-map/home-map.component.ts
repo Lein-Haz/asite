@@ -14,7 +14,7 @@ export class HomeMapComponent implements OnInit, AfterViewInit {
 
   private markerList: MyMarker[] = [];
   @Input()
-  private overLayText: string;
+  public overLayText: string;
 
   ngAfterViewInit(): void {
 

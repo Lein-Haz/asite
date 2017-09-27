@@ -13,6 +13,7 @@ import { MATERIAL_COMPATIBILITY_MODE } from "@angular/material";
 import {AboutModule} from "./about/about.module";
 import {GoogleSigninModule} from "./shared/google-signin/google-signin.module";
 import {HomeModule} from "./home/home.module";
+import {MapStuffModule} from "./map-stuff/map-stuff.module";
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import {HomeModule} from "./home/home.module";
     HttpModule,
     FlexLayoutModule,
     GoogleSigninModule,
-    HomeModule
+    HomeModule,
+    MapStuffModule
   ],
   providers: [
     { provide: MATERIAL_COMPATIBILITY_MODE, useValue: true }

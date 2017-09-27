@@ -4,6 +4,7 @@ import {MyLatLngBounds} from "../../app/shared/google-map/mapModels/myLatLngBoun
 export interface IStoryStepModel{
   action: string;
   zoom: number;
+  delay: number;//in milliseconds
   text?: string;
   latLng?: MyLatLng;
   bounds?: MyLatLngBounds;

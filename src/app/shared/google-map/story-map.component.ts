@@ -1,7 +1,5 @@
 import {Component, OnInit, ElementRef, ViewChild, AfterViewInit, Output} from '@angular/core';
-import {MyLatLng} from "./mapModels/myLatLng";
 import {MyMap} from "./mapModels/myMap";
-import {MyMarker} from "./mapModels/myMarker";
 import {ConstantService} from "../../../core/services/constant.service";
 
 import {StoryService} from "../../../core/services/story.service";
@@ -19,33 +17,55 @@ export class StoryMapComponent implements OnInit, AfterViewInit {
   @ViewChild('gmap') myMap: ElementRef;
 
   private storyMap: MyMap;
-  private markerList: MyMarker[];
-  private overLayText: string;
+  public overLayText: string;
+  private storyArray: StoryModel[];
 
   @Output()
   doSomething(){
-    console.log(this.storyMap);
     StoryService.lockMap(this.storyMap);
     this.doStory(this.storyMap);
   }
 
+  steppedZoom(map: MyMap, destinationZoomLevel: number){
+    if(map.getZoom() == destinationZoomLevel){
+      console.log("You good");
+    }else{
+      let zoomObservable = this.storyService.steppedZoom(map, destinationZoomLevel);
+
+      zoomObservable.subscribe(
+        (val)=>{
+          console.log("The root next");
+          map.setZoom(val);
+        },
+        (err)=>{
+          console.log(err);
+        },
+        ()=>{
+          StoryService.unlockMap(this.storyMap);
+          console.log("the root completed");
+        }
+      );
+    }
+  }
+
   public doStory(map: MyMap){
     const STORIES = ConstantService.STORIES;
-    let storyArray = this.storyService.buildStoryFromConstant(STORIES);
+    this.storyArray = this.storyService.buildStoryFromConstant(STORIES);
 
-    let bigObs: Observable<any>;
-    storyArray.forEach((story: StoryModel)=>{
-      let newObservable = this.sceneHandler(story, map);
-      if(isUndefined(bigObs)){
-        bigObs = newObservable;
+    let wholeStoryObservable: Observable<any>;
+    this.storyArray.forEach((story: StoryModel)=>{
+      let newObservable = this.storyHandler(story, map);
+      if(isUndefined(wholeStoryObservable)){
+        wholeStoryObservable = newObservable;
       }else{
-        bigObs = bigObs.concat(newObservable);
+        wholeStoryObservable = wholeStoryObservable.concat(newObservable);
       }
     });
 
-    bigObs.subscribe(
+    wholeStoryObservable.subscribe(
       (val)=>{
-        console.log("The Next?");
+        console.log("The root next");
+        console.log("One story done");
         console.log(val);
       },
       (err)=>{
@@ -53,22 +73,31 @@ export class StoryMapComponent implements OnInit, AfterViewInit {
       },
       ()=>{
         StoryService.unlockMap(this.storyMap);
-        console.log("completed");
+        console.log("the root completed");
       }
     );
   }
 
-  sceneHandler(story: StoryModel, map: MyMap): Observable<any>{
+  storyHandler(story: StoryModel, map: MyMap): Observable<any>{
     return Observable.create((sceneObserver)=>{
-      let steps = this.storyService.intervalSet((story.steps.length));
-      steps.subscribe(
-        (val)=>{
-          this.processScene(story.steps[val], map, story);
+      let stepObservable;
+      story.steps.forEach((storyStep: StoryStepModel, index:number)=>{
+        if(isUndefined(stepObservable)){
+          stepObservable = this.storyService.setStepDelay(storyStep.delay, index);
+        }else{
+          stepObservable = stepObservable.concat(this.storyService.setStepDelay(storyStep.delay, index));
+        }
+      });
+      stepObservable.subscribe(
+        (stepIndex)=> {
+          console.log("steps say val is " + stepIndex);
+          this.processStep(story.steps[stepIndex], map, story);
         },
-        (err)=>{
+        (err)=> {
+          console.log("Error happened with story steps");
           console.log(err);
         },
-        ()=>{
+        ()=> {
           setTimeout(()=>{
             this.storyService.closeStory(story);
           }, 1750);
@@ -78,9 +107,13 @@ export class StoryMapComponent implements OnInit, AfterViewInit {
     });
   }
 
-  processScene(storyStep: StoryStepModel, map: MyMap, story: StoryModel){
+  processStep(storyStep: StoryStepModel, map: MyMap, story: StoryModel){
     this.overLayText = storyStep.text;
+
     map.setZoom(storyStep.zoom);
+
+    //needs delays set and zoom storysteps
+    //this.steppedZoom(map, storyStep.zoom);
     this.storyService.handleAction(storyStep, map, story);
   }
 
@@ -94,6 +127,19 @@ export class StoryMapComponent implements OnInit, AfterViewInit {
 
   }
 
+  @Output()
+  clearMap(){
+    StoryService.clearStoryElements(this.storyArray);
+  }
+
+  ngAfterViewInit(): void {
+    this.mapInit();
+  }
+
+  mapInit(){
+
+  }
+
   mapInitHandler($event){
     this.storyMap = $event;
     this.storyMap.setOptions({
@@ -103,28 +149,7 @@ export class StoryMapComponent implements OnInit, AfterViewInit {
     });
   }
 
-  initSomeMarkers(){
-    const COORDINATES = ConstantService.COORDINATES;
-    for (let key in COORDINATES){
-      let tempLL = new MyLatLng(COORDINATES[key].LAT, COORDINATES[key].LNG);
-      this.markerList.push(this.storyService.addMarker(tempLL, this.storyMap, key));
-    }
-    console.log(this.markerList);
-  }
-
-  ngAfterViewInit(): void {
-    this.mapInit();
-  }
-
-  mapInit(){
-    let opts = {
-      center: {lat: 48.395315, lng: 9.990424},
-      zoom: 14
-    };
-  }
-
   constructor(private storyService: StoryService) {
-    this.markerList = [];
   }
 
   ngOnInit() {

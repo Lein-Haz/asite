@@ -8,7 +8,7 @@ import {AuthService} from "../core/services/auth.service";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements AfterViewInit{
-  private FLEX_LAYOUT = ConstantService.FLEX_LAYOUT;
+  public FLEX_LAYOUT = ConstantService.FLEX_LAYOUT;
 
   public isSignedIn: boolean;
 

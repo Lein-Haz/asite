@@ -10,7 +10,7 @@ export class GoogleMapComponent implements OnInit, AfterViewInit {
   @ViewChild('mymap') myMap: ElementRef;
 
   private theMap: MyMap;
-  @Input() private showOverLay: boolean = false;
+  @Input() public showOverLay: boolean = false;
   @Input() private overLayText: string;
 
   @Output() mapInitializedEmitter: EventEmitter<MyMap> = new EventEmitter();

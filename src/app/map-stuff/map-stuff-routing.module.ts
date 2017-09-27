@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { OauthComponent } from './oauth.component';
+import {MapStuffComponent} from "./map-stuff.component";
 
 const routes: Routes = [
   {
-    path: 'oauth',
-    component: OauthComponent,
+    path: 'map-stuff',
+    component: MapStuffComponent,
     resolve: {
     }
   }
@@ -15,4 +15,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class OauthRoutingModule { }
+export class MapStuffRoutingModule { }

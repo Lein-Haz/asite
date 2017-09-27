@@ -12,14 +12,14 @@ import {} from '@types/googlemaps';
 import SymbolPath = google.maps.SymbolPath;
 import spherical = google.maps.geometry.spherical
 import {ConstantService} from "./constant.service";
-
+import {isUndefined} from "util";
 
 @Injectable()
 export class StoryService{
 
   constructor( ){ }
 
-  public buildStoryFromConstant(storiesArray){
+  public buildStoryFromConstant(storiesArray):StoryModel[]{
     let storyArray: StoryModel[] = [];
     for(let val of storiesArray){
       let startLL = new MyLatLng(val.startMarker.lat, val.startMarker.lng);
@@ -37,7 +37,7 @@ export class StoryService{
         if(stepVal.bounds){
           newBounds = new MyLatLngBounds(stepVal.bounds.sw, stepVal.bounds.ne);
         }
-        let storyStep = new StoryStepModel(stepVal.action, stepVal.text, newLatLng, newBounds);
+        let storyStep = new StoryStepModel(stepVal.action, stepVal.delay, stepVal.text, newLatLng, newBounds);
         storyStep.path = pathArray;
         storyStep.zoom = stepVal.zoom;
         stepsArray.push(storyStep);
@@ -59,9 +59,9 @@ export class StoryService{
   public handleAction(storyStep: StoryStepModel , map: MyMap, story){
     let aRetThing: string;
     switch (storyStep.action){
-      case ConstantService.MAP_ACTIONS.ADD_MARKER:
-        aRetThing = "Add Mah-ka";
-        this.addMarker(storyStep.latLng, map);
+      case ConstantService.MAP_ACTIONS.FOCUS_LAT_LNG:
+        aRetThing = "Focus spot";
+        map.panTo(storyStep.latLng);
         break;
       case ConstantService.MAP_ACTIONS.ADD_START_MARKER:
         aRetThing = "Add Mah-ka";
@@ -78,7 +78,7 @@ export class StoryService{
       case ConstantService.MAP_ACTIONS.FOCUS_ADD_PATH:
         aRetThing = "Add Paff";
         StoryService.panToPath(storyStep.path[0], storyStep.path[1], map);
-        this.drawFilledPath(storyStep.path[0], storyStep.path[1], map, story);
+        story.path = this.drawFilledPath(storyStep.path[0], storyStep.path[1], map, story);
         break;
       case ConstantService.MAP_ACTIONS.FOCUS_BOUNDS:
         aRetThing = "Set bounds";
@@ -86,7 +86,7 @@ export class StoryService{
         break;
       case ConstantService.MAP_ACTIONS.ADD_PATH:
         aRetThing = "Add path";
-        this.drawFilledPath(storyStep.path[0], storyStep.path[1], map, story);
+        story.path = this.drawFilledPath(storyStep.path[0], storyStep.path[1], map, story);
         break;
       default:
         break;
@@ -105,7 +105,7 @@ export class StoryService{
     });
   }
 
-  drawFilledPath(startPoint: MyLatLng, endPoint: MyLatLng, map: MyMap, story: StoryModel){
+  drawFilledPath(startPoint: MyLatLng, endPoint: MyLatLng, map: MyMap, story: StoryModel): MyPolyline{
     let lineSymbol = {
       path: SymbolPath.FORWARD_OPEN_ARROW,
       scale: 7,
@@ -130,10 +130,10 @@ export class StoryService{
 
     });
 
-    this.fillPath(myLine, startPoint, endPoint, map, story);
+    return this.fillPath(myLine, startPoint, endPoint, map, story);
   }
 
-  fillPath(line: MyPolyline, origin: MyLatLng, end: MyLatLng, map: MyMap, story: StoryModel){
+  fillPath(guideLine: MyPolyline, origin: MyLatLng, end: MyLatLng, map: MyMap, story: StoryModel): MyPolyline{
     let count = 0;
     let fillLine = new MyPolyline({
       strokeColor: '#FFB700',
@@ -145,29 +145,57 @@ export class StoryService{
       path: [origin,origin],
 
     });
+
     let lineAnimate = setInterval(() => {//"fills" path once
-      let icons = line.get('icons');
+      let icons = guideLine.get('icons');
       count = (count + 1) % 200;
 
       icons[0].offset = (count/2) + '%';
 
       let pathEnd = spherical.interpolate(origin, end, (count === 0)? 1: ((count/2)/100));
       fillLine.setPath([origin,pathEnd]);
-
-      line.set('icons', icons);
+      guideLine.set('icons', icons);
 
       //On first completion
       if(count == 0){
-        //console.log(count);
-        //console.log(icons[0].offset);
+        guideLine.setMap(null);//remove guideLine from map
+        fillLine.set('strokeColor', '#4C9CB7');//change color
+        fillLine.set('zIndex', 0);//lower zIndex so future animating lines will cover it
 
-        line.set('icons', []);
-        fillLine.set('strokeColor', '#4C9CB7');
-        fillLine.set('zIndex', 0);
 
         clearInterval(lineAnimate);
       }
     }, 15);
+
+    return fillLine;
+  }
+
+  steppedZoom(map: MyMap, destinationZoomLevel: number): Observable<any>{
+    let zoomLvlSteps = StoryService.getSteppedZoomArray(map.getZoom(), destinationZoomLevel);
+    let zoomObservable: Observable<any>;
+    zoomLvlSteps.forEach((zoomLevel: number)=>{
+      let newObservable = this.setStepDelay(150, zoomLevel);
+      if(isUndefined(zoomObservable)){
+        zoomObservable = newObservable;
+      }else{
+        zoomObservable = zoomObservable.concat(newObservable);
+      }
+    });
+    return zoomObservable;
+  }
+
+  static getSteppedZoomArray(currentZoom: number, destinationZoom: number): number[]{
+    let zoomDiff = currentZoom - destinationZoom;
+    let shouldSubtract: boolean = zoomDiff > 0;
+    let zoomAbso = Math.abs(zoomDiff);//positive int value of desired array size
+    let zoomLvlSteps: number[] = [];
+    do{
+      let marginalValue = (shouldSubtract)? -1 : 1;
+      let nextZoom = (currentZoom + marginalValue) + (zoomLvlSteps.length * marginalValue);
+
+      zoomLvlSteps.push(nextZoom);
+    }while (zoomLvlSteps.length < zoomAbso);
+    return zoomLvlSteps;
   }
 
   public closeStory(story: StoryModel){
@@ -190,14 +218,31 @@ export class StoryService{
   static unlockMap(map: MyMap){
     map.set('gestureHandling','auto');
   }
-
-  public intervalSet(rounds: number): Observable<any>{
-    console.log("Interval set");
-    let obs = Observable
-      .interval(3000)
-      .take(rounds);
-    return obs;
+  static clearStoryElements(stories: StoryModel|StoryModel[]){
+    if(stories && Array.isArray(stories) && stories.length > 0){
+      console.log("array clear");
+      stories.forEach((story)=>{
+        StoryService.mapClearFunction(story);
+      });
+    }else if(stories){
+      StoryService.mapClearFunction(stories as StoryModel);
+    }
   }
 
+  static mapClearFunction(story: StoryModel){
+    story.startMarker.setMap(null);
+    story.endMarker.setMap(null);
+    story.path.setMap(null);
+  }
 
+  public setStepDelay(delay: number, index:number): Observable<any>{
+    console.log("creating new delay return, with a delay of " + delay + ", for the index " + index);
+    return Observable.create((observer)=>{
+      setTimeout(()=>{
+        console.log("In the timeout with a delay of " + delay);
+        observer.next(index);
+        observer.complete();
+      }, delay);
+    });
+  }
 }
