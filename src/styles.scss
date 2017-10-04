@@ -24,7 +24,10 @@ mat-sidenav-container{
   mat-nav-list{
     mat-list-item{
       width: 100%;
-      border-bottom: 1px solid black;//bottom border
+      .mat-list-item-content{
+        color: mat-contrast($my-app-primary, $nav-list-items-hue);
+      }
+      border-bottom: 1px solid mat-contrast($my-app-primary, $nav-list-items-hue);//bottom border
       &:last-child{
         border-bottom: none;//except on last
       }
@@ -39,16 +42,18 @@ mat-sidenav-container{
     z-index: 10;
   }
 
-  mat-sidenav.mat-drawer{
+  mat-sidenav.mat-drawer.mat-sidenav{
     position: fixed;
     top: 0;
     left: 0;
     z-index: 11;
-    background-color: mat-color($my-app-primary, 600);
+    background-color: mat-color($my-app-primary, $nav-list-items-hue);
+
   }
 }
 
 mat-toolbar.full-nav{
+  background-color: mat-color($my-app-primary, $top-nav-hue);
   position: fixed;
   min-height: $nav-tool-bar-height-dt;
   top: 0;
@@ -62,5 +67,41 @@ mat-toolbar.full-nav{
     mat-toolbar-row{
       height: $nav-tool-bar-height-dt;
     }
+  }
+}
+
+mat-card{
+  @media #{$break-point-xs} {
+    padding: 0 !important;
+  }
+
+  @media #{$break-point-sm} {
+    padding: 0.2em !important;
+  }
+
+  @media #{$break-point-md} {
+    padding: 0.75em !important;
+  }
+
+  @media #{$break-point-lg} {
+    padding: 0.75em !important;
+  }
+}
+
+screen-tile{
+  @media #{$break-point-xs} {
+    padding: 0.1em;
+  }
+
+  @media #{$break-point-sm} {
+    padding: 0.2em;
+  }
+
+  @media #{$break-point-md} {
+    padding: 0.25em;
+  }
+
+  @media #{$break-point-lg} {
+    padding: 0.25em;
   }
 }

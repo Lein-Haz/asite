@@ -1,25 +1,28 @@
-<div class="basey">
-  <div class="shade" fxLayout="column" fxLayoutAlign="center">
-    <div fxFlex="80">
+<div>
+  <div class="shade" fxLayout="column" fxLayoutAlign="space-between">
+    <div fxFlex.xs="90" fxFlex.sm="85" fxFlex.md="20" fxFlex.lg="80">
       <div fxLayout="row" fxFlexFill fxLayoutAlign="center center">
         <div fxFlex class="shade-text">
-          Looking for dev?
+          <div>Just some developer's website.</div>
+          <div>{{shadeText}}</div>
         </div>
       </div>
-
-
-      <!--<img src="assets/TypeScript_logo.svg" alt="typescript logo">-->
-
     </div>
-    <div fxFlex>
-      <div fxLayout="row" fxLayoutAlign="center center">
-        <button aria-label="menu" mat-fab (click)="scrollDown()" color="primary">
-          <mat-icon>expand_more</mat-icon>
-        </button>
+
+    <div fxFlex.xs="10" fxFlex.sm="15" fxFlex.md="20" fxFlex.lg="20">
+      <div class="shade-footer" fxFlexFill fxLayout="row" fxLayoutAlign="center stretch">
+        <span fxFlex.xs="25" fxFlex.sm="30" fxFlex.md="20" fxFlex.lg="15">
+          <div class="butt-wrapper">
+            <button aria-label="menu" mat-button (click)="scrollDown()">
+              <mat-icon>expand_more</mat-icon>
+            </button>
+          </div>
+        </span>
       </div>
     </div>
+
   </div>
   <div class="background-pic">
-    <img src="https://images.unsplash.com/photo-1429794890858-d3016a2bb73c?fit=clip&fm=jpg&bg=FFFFFF&w=1920">
+    <media-carousel></media-carousel>
   </div>
 </div>

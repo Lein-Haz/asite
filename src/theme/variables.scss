@@ -1,3 +1,5 @@
+@import "app-theme";
+
 $app-line-height: 2em;
 
 $nav-tool-bar-height-dt: 7vh;
@@ -13,3 +15,6 @@ $break-point-lg: "screen and (min-width: 1280px)";
 
 $break-point-mob: "screen and (max-width: 959px)";
 $break-point-dt: "screen and (min-width: 960px)";
+
+$nav-list-items-hue: 500;
+$top-nav-hue: 700;

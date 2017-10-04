@@ -1,0 +1,58 @@
+@import "../../../theme/variables";
+
+$display-hue: 100;
+
+.display-tile-flex-wrap{
+  /*@media #{$break-point-xs} {
+
+  }
+
+  @media #{$break-point-sm} {
+
+  }
+  @media #{$break-point-md} {
+
+  }
+
+  @media #{$break-point-lg} {
+    height: 45vh;
+  }*/
+  background-color: mat-color($my-app-primary, $display-hue, 0.6);
+
+  min-height: 30em;
+  padding: 0.5em;
+
+  .image-hold{
+    padding: 0.5em;
+
+    .image-wrapper{
+      display: flex;
+      height: 100%;
+      width: 100%;
+
+      img{
+        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+  }
+}
+
+.tech-heading{
+  text-align: center;
+  h1,h2,h3,h4,h5,h6{
+    margin: 0;
+    font-size: 2em;
+    border-bottom: 2px solid mat-color($my-app-accent, 600, 0.8);
+  }
+}
+
+.tech-line{
+  padding: 0.3em 0;//a bit on top and bottom
+  font-size: 1.5em;
+  border-top: 1px solid mat-color($my-app-neutral, $display-hue);
+  &:last-child{
+    border-bottom: 1px solid mat-color($my-app-neutral, $display-hue);
+  }
+}

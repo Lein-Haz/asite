@@ -1,4 +1,4 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
 
 @Component({
   selector: 'media-shade',
@@ -11,6 +11,7 @@ export class MediaShadeComponent implements OnInit {
 
   @Output() scrollPast: EventEmitter<any> = new EventEmitter();
 
+  @Input() public shadeText: string;
 
   scrollDown(){
     this.scrollPast.emit(true);

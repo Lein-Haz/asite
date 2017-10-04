@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {isUndefined} from "util";
 
 function _window(): any {
@@ -15,6 +15,16 @@ declare interface ScrollPoint{
 export class WindowRef {
   public nativeWindow(): any {
     return _window();
+  }
+
+  private static navHeight: number;
+
+  public static getNavHeight(): number{
+    return WindowRef.navHeight;
+  }
+
+  public static setNavHeight(height: number): void{
+    WindowRef.navHeight = height;
   }
 
   public animatedScroll(startY: number, stopY: number, animationDuration: number =550, totalSteps: number = 70){
@@ -74,6 +84,22 @@ export class WindowRef {
     );
   }
 
+  /* being used to get url params for picture loads */
+  public static getMediaBreakPointFull(width: number){
+    if(width < 600){//xs
+      return 600;
+    }else if(width < 960){//sm
+      return 960;
+    }else if(width < 1280){//md
+      return 1280;
+    }else if(width < 1920){//lg
+      return 1920;
+    }else if(width < 5000){//xl
+      //return 5000;
+      return 3840;//max image size right now
+    }
+  }
+
   private setScrollDelay(delay: number, yPos:number): Observable<any>{
     return Observable.create((observer)=>{
       setTimeout(()=>{
@@ -81,6 +107,30 @@ export class WindowRef {
         observer.complete();
       }, delay);
     });
+  }
+
+  public static windowScrollObserver(window: Window): Observable<any>{
+    let scrollObservable = Observable.create((observer)=>{
+      window.addEventListener('scroll', ()=>{
+        observer.next(window.scrollY);
+      });
+    });
+    return scrollObservable;
+  }
+
+  public getScrollSubject(): Subject<any>{
+    let window = this.nativeWindow();
+    let scrollObservable = WindowRef.windowScrollObserver(window);
+    let scrollSubject = new Subject();
+
+    scrollObservable.subscribe(scrollSubject);
+    return scrollSubject;
+  }
+
+  public checkPortraitOrientation(){
+    let viewWidth = this.nativeWindow().innerWidth;
+    let viewHeight = this.nativeWindow().innerHeight;
+    return (viewHeight > viewWidth);//if higher than wide, then portrait = true
   }
 
   private scrollStepObservableBuilder(scrollSteps: ScrollPoint[]): Observable<any>{
