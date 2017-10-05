@@ -11,8 +11,7 @@
       "assets": [
         "assets",
         "favicon.ico",
-        "manifest.json",
-        "CNAME"
+        "manifest.json"
       ],
       "index": "index.html",
       "main": "main.ts",

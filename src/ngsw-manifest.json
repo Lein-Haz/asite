@@ -1,11 +1,11 @@
 {
   "routing": {
-    "index": "/asite/index.html",
+    "index": "/index.html",
     "routes": {
       "/": {
         "match": "exact"
       },
-      "\/asite\/base\/.*": {
+      "\/base\/.*": {
         "match": "regex"
       }
     }
@@ -24,9 +24,20 @@
           "maxAgeMS": "604800000",
           "maxEntries": 20,
           "strategy": "lru"
-
+        }
+      }, {
+        "name": "gmap",
+        "urls": {
+          "https://maps.googleapis.com/maps/api/js?key=AIzaSyDW2rnsG-2gOOJM5N3V3h261420EuDSrm4&libraries=geometry": {
+            "match": "full"
+          }
         },
-        "fullUrl": "https://images.unsplash.com/photo-1428094479093-8973a318bd76?dpr=1&auto=compress,format&fm=jpg"
+        "cache": {
+          "optimizeFor": "performance",
+          "maxAgeMS": "604800000",
+          "maxEntries": 2,
+          "strategy": "lru"
+        }
       }
     ]
   },
