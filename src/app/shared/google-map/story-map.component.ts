@@ -1,4 +1,4 @@
-import {Component, OnInit, ElementRef, ViewChild, AfterViewInit, Output} from '@angular/core';
+import {Component, OnInit, AfterViewInit, Output} from '@angular/core';
 import {MyMap} from "./mapModels/myMap";
 import {ConstantService} from "../../../core/services/constant.service";
 
@@ -14,41 +14,42 @@ import {isUndefined} from "util";
   styleUrls: ['./google-map.component.scss']
 })
 export class StoryMapComponent implements OnInit, AfterViewInit {
-  @ViewChild('gmap') myMap: ElementRef;
-
   private storyMap: MyMap;
   public overLayText: string;
   private storyArray: StoryModel[];
+  public storyActive: boolean;
+  public totalDistance: number = 0;
+  public tenMillion: number = 10000000;
 
   @Output()
-  doSomething(){
-    StoryService.lockMap(this.storyMap);
-    this.doStory(this.storyMap);
+  runStory(){
+    if(!this.storyActive){
+      this.clearMap();//clear previous
+      StoryService.lockMap(this.storyMap);//lock interaction
+      this.doStory(this.storyMap);//do story
+    }
   }
 
   steppedZoom(map: MyMap, destinationZoomLevel: number){
-    if(map.getZoom() == destinationZoomLevel){
-      console.log("You good");
-    }else{
+    if(map.getZoom() !== destinationZoomLevel){
       let zoomObservable = this.storyService.steppedZoom(map, destinationZoomLevel);
 
       zoomObservable.subscribe(
         (val)=>{
-          console.log("The root next");
           map.setZoom(val);
         },
         (err)=>{
           console.log(err);
         },
         ()=>{
-          StoryService.unlockMap(this.storyMap);
-          console.log("the root completed");
+
         }
       );
     }
   }
 
   public doStory(map: MyMap){
+    this.storyActive = true;
     const STORIES = ConstantService.STORIES;
     this.storyArray = this.storyService.buildStoryFromConstant(STORIES);
 
@@ -64,18 +65,20 @@ export class StoryMapComponent implements OnInit, AfterViewInit {
 
     wholeStoryObservable.subscribe(
       (val)=>{
-        console.log("The root next");
-        console.log("One story done");
-        console.log(val);
+        this.totalDistance += val;
       },
       (err)=>{
         console.log(err);
       },
       ()=>{
         StoryService.unlockMap(this.storyMap);
-        console.log("the root completed");
+        this.storyActive = false;
       }
     );
+  }
+
+  metersToMiles(meters: number):number{
+    return StoryService.convertMetersToMiles(meters);
   }
 
   storyHandler(story: StoryModel, map: MyMap): Observable<any>{
@@ -90,7 +93,6 @@ export class StoryMapComponent implements OnInit, AfterViewInit {
       });
       stepObservable.subscribe(
         (stepIndex)=> {
-          console.log("steps say val is " + stepIndex);
           this.processStep(story.steps[stepIndex], map, story);
         },
         (err)=> {
@@ -101,6 +103,7 @@ export class StoryMapComponent implements OnInit, AfterViewInit {
           setTimeout(()=>{
             this.storyService.closeStory(story);
           }, 1750);
+          sceneObserver.next(story.distanceTraveled);
           sceneObserver.complete();
         }
       );
@@ -109,26 +112,20 @@ export class StoryMapComponent implements OnInit, AfterViewInit {
 
   processStep(storyStep: StoryStepModel, map: MyMap, story: StoryModel){
     this.overLayText = storyStep.text;
-
-    map.setZoom(storyStep.zoom);
-
-    //needs delays set and zoom storysteps
-    //this.steppedZoom(map, storyStep.zoom);
+    this.steppedZoom(map, storyStep.zoom);
     this.storyService.handleAction(storyStep, map, story);
   }
 
-  @Output()
   getBnds(){
     let bnds = this.storyMap.getBounds();
     console.log("Northeast is " + bnds.getNorthEast().toString());
     console.log("Southwest is " + bnds.getSouthWest().toString());
     console.log("Center is " + bnds.getCenter().toString());
     console.log("Zoom is " + this.storyMap.getZoom());
-
   }
 
-  @Output()
   clearMap(){
+    this.totalDistance = 0;
     StoryService.clearStoryElements(this.storyArray);
   }
 
@@ -153,7 +150,7 @@ export class StoryMapComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.overLayText = "Just initing the overlay text";
+    this.overLayText = "Check out my story.";
   }
 
 }

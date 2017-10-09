@@ -3,7 +3,6 @@ import { Observable } from "rxjs/Rx";
 import {StoryStepModel} from "../models/StoryStep.model";
 import {MyLatLng} from "../../app/shared/google-map/mapModels/myLatLng";
 import {StoryModel} from "../models/Story.model";
-import {MyLatLngBounds} from "../../app/shared/google-map/mapModels/myLatLngBounds";
 import {MyPolyline} from "../../app/shared/google-map/mapModels/myPolyline";
 import {MyMap} from "../../app/shared/google-map/mapModels/myMap";
 import {MyMarker} from "../../app/shared/google-map/mapModels/myMarker";
@@ -33,11 +32,7 @@ export class StoryService{
         if(stepVal.latLng){
           newLatLng = new MyLatLng(stepVal.latLng.lat, stepVal.latLng.lng);
         }
-        let newBounds: MyLatLngBounds;
-        if(stepVal.bounds){
-          newBounds = new MyLatLngBounds(stepVal.bounds.sw, stepVal.bounds.ne);
-        }
-        let storyStep = new StoryStepModel(stepVal.action, stepVal.delay, stepVal.text, newLatLng, newBounds);
+        let storyStep = new StoryStepModel(stepVal.action, stepVal.delay, stepVal.text, newLatLng);
         storyStep.path = pathArray;
         storyStep.zoom = stepVal.zoom;
         stepsArray.push(storyStep);
@@ -57,41 +52,22 @@ export class StoryService{
   }
 
   public handleAction(storyStep: StoryStepModel , map: MyMap, story){
-    let aRetThing: string;
     switch (storyStep.action){
       case ConstantService.MAP_ACTIONS.FOCUS_LAT_LNG:
-        aRetThing = "Focus spot";
         map.panTo(storyStep.latLng);
         break;
       case ConstantService.MAP_ACTIONS.ADD_START_MARKER:
-        aRetThing = "Add Mah-ka";
         story.startMarker = this.addMarker(storyStep.latLng, map);
         break;
       case ConstantService.MAP_ACTIONS.ADD_END_MARKER:
-        aRetThing = "Add Mah-ka";
         story.endMarker = this.addMarker(storyStep.latLng, map);
         break;
-      case ConstantService.MAP_ACTIONS.FOCUS_PATH:
-        aRetThing = "Focus Path";
-        StoryService.panToPath(storyStep.path[0], storyStep.path[1], map);
-        break;
-      case ConstantService.MAP_ACTIONS.FOCUS_ADD_PATH:
-        aRetThing = "Add Paff";
-        StoryService.panToPath(storyStep.path[0], storyStep.path[1], map);
-        story.path = this.drawFilledPath(storyStep.path[0], storyStep.path[1], map, story);
-        break;
-      case ConstantService.MAP_ACTIONS.FOCUS_BOUNDS:
-        aRetThing = "Set bounds";
-        StoryService.panToBounds(storyStep.bounds, map);
-        break;
       case ConstantService.MAP_ACTIONS.ADD_PATH:
-        aRetThing = "Add path";
         story.path = this.drawFilledPath(storyStep.path[0], storyStep.path[1], map, story);
         break;
       default:
         break;
     }
-    return aRetThing;
   }
 
   public addMarker(position: MyLatLng, map: MyMap, title: string = ""): MyMarker{
@@ -129,6 +105,8 @@ export class StoryService{
       ]
 
     });
+    let distanceInMeters = spherical.computeDistanceBetween(startPoint, endPoint);
+    story.distanceTraveled = Number.parseFloat(distanceInMeters.toFixed(1));
 
     return this.fillPath(myLine, startPoint, endPoint, map, story);
   }
@@ -154,6 +132,7 @@ export class StoryService{
 
       let pathEnd = spherical.interpolate(origin, end, (count === 0)? 1: ((count/2)/100));
       fillLine.setPath([origin,pathEnd]);
+      map.panTo(pathEnd);
       guideLine.set('icons', icons);
 
       //On first completion
@@ -161,7 +140,6 @@ export class StoryService{
         guideLine.setMap(null);//remove guideLine from map
         fillLine.set('strokeColor', '#4C9CB7');//change color
         fillLine.set('zIndex', 0);//lower zIndex so future animating lines will cover it
-
 
         clearInterval(lineAnimate);
       }
@@ -203,15 +181,6 @@ export class StoryService{
     story.endMarker.set('icon',ConstantService.ICON_SHAPES.INACTIVE_CIRCLE);
   }
 
-  static panToPath(startPoint: MyLatLng, endPoint: MyLatLng, map: MyMap){
-    let pathMidway = spherical.interpolate(startPoint, endPoint, .5);
-    map.panTo(pathMidway);
-  }
-
-  static panToBounds(bounds: MyLatLngBounds, map: MyMap){
-    map.panToBounds(bounds);
-  }
-
   static lockMap(map: MyMap){
     map.set('gestureHandling','none');
   }
@@ -229,17 +198,31 @@ export class StoryService{
     }
   }
 
+  static convertMetersToMiles(distanceInMeters: number):number{
+    let asMiles = distanceInMeters *
+      ConstantService.CONVERSION_CONSTANTS.M_TO_KM_MULTIPLIER *
+      ConstantService.CONVERSION_CONSTANTS.KM_TO_MILE_MULTIPLIER;
+
+    return Math.round(asMiles);
+  }
+
   static mapClearFunction(story: StoryModel){
-    story.startMarker.setMap(null);
-    story.endMarker.setMap(null);
-    story.path.setMap(null);
+    if(!isUndefined(story.startMarker)){
+      story.startMarker.setMap(null);
+    }
+    if(!isUndefined(story.endMarker)){
+      story.endMarker.setMap(null);
+    }
+    if(!isUndefined(story.path)){
+      story.path.setMap(null);
+    }
   }
 
   public setStepDelay(delay: number, index:number): Observable<any>{
-    console.log("creating new delay return, with a delay of " + delay + ", for the index " + index);
+    //console.log("creating new delay return, with a delay of " + delay + ", for the index " + index);
     return Observable.create((observer)=>{
       setTimeout(()=>{
-        console.log("In the timeout with a delay of " + delay);
+        //console.log("In the timeout with a delay of " + delay);
         observer.next(index);
         observer.complete();
       }, delay);
