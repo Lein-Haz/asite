@@ -67,8 +67,7 @@ export class MapService{
     if(!anim && !marker.selected){
 
       marker.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(($event)=>{
-        console.log($event);
+      setTimeout(()=>{
         marker.setAnimation(null);
       }, 2800);
     }else{
