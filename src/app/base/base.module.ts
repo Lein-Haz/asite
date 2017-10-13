@@ -17,6 +17,7 @@ import {MediaCarouselComponent} from "../shared/media-shade/media-carousel.compo
 import {TechDemosModule} from "../tech-demos/tech-demos.module";
 import {FooterComponent} from "../shared/footer/footer.component";
 import {NavListComponent} from "../shared/nav-list/nav-list.component";
+import {SomeHexModule} from "../some-hex/some-hex.module";
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import {NavListComponent} from "../shared/nav-list/nav-list.component";
     OauthreturnModule,
     AboutModule,
     GoogleSigninModule,
-    TechDemosModule
+    TechDemosModule,
+    SomeHexModule
   ],
   declarations: [
     BaseComponent,

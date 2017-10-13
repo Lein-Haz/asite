@@ -7,6 +7,7 @@ import {MapStuffRoutingModule} from "../map-stuff/map-stuff-routing.module";
 import {OauthreturnRoutingModule} from "../oauthreturn/oauthreturn-routing.module";
 import {BaseResolve} from "./base.resolve";
 import {TechDemosRoutingModule} from "../tech-demos/tech-demos-routing.module";
+import {SomeHexRoutingModule} from "../some-hex/some-hex-routing.module";
 
 const routes: Routes = [
   {
@@ -22,7 +23,8 @@ const routes: Routes = [
       AboutRoutingModule.getRoutes()[0],
       MapStuffRoutingModule.getRoutes()[0],
       OauthreturnRoutingModule.getRoutes()[0],
-      TechDemosRoutingModule.getRoutes()[0]
+      TechDemosRoutingModule.getRoutes()[0],
+      SomeHexRoutingModule.getRoutes()[0]
     ],
     resolve: {
       app: BaseResolve
