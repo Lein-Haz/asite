@@ -7,11 +7,17 @@ import {Component, OnInit} from '@angular/core';
 })
 export class SomeHexComponent implements OnInit {
 
+  private arrayLength: number = 5;
+  public thingArray = [];
+
   constructor() {
 
   }
 
   ngOnInit() {
+    for(let i = 0; i < this.arrayLength; i++){
+      this.thingArray.push((i+1));
+    }
 
   }
 

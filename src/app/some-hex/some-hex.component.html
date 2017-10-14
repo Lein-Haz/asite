@@ -1,1 +1,8 @@
-<div>Hello</div>
+<div fxLayout="row" fxLayoutAlign="start center">
+  <div fxFlex="20%" *ngFor="let thing of thingArray">
+    <div>{{thing}}</div>
+  </div>
+</div>
+<div>
+  <hex-tile></hex-tile>
+</div>

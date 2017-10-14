@@ -5,6 +5,7 @@ import {AppMaterialModule} from "../shared/app-material/app-material.module";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {SomeHexComponent} from "./some-hex.component";
 import {SomeHexRoutingModule} from "./some-hex-routing.module";
+import {AHexTileComponent} from "./a-hex-tile.component";
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import {SomeHexRoutingModule} from "./some-hex-routing.module";
     SomeHexRoutingModule
   ],
   declarations: [
-    SomeHexComponent
+    SomeHexComponent,
+    AHexTileComponent
   ]
 })
 export class SomeHexModule { }
