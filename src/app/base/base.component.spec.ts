@@ -13,11 +13,12 @@ import {GoogleSigninModule} from "../shared/google-signin/google-signin.module";
 import {AuthService} from "../../core/services/auth.service";
 import {HttpClientTestingModule} from "@angular/common/http/testing";
 import {WindowRef} from "../../core/services/window.ref";
-import {MATERIAL_COMPATIBILITY_MODE} from "@angular/material";
+import {MATERIAL_COMPATIBILITY_MODE, MdSidenav} from "@angular/material";
 import {NoopAnimationsModule} from "@angular/platform-browser/animations";
 import {ConstantService} from "../../core/services/constant.service";
+import {By} from "@angular/platform-browser";
 
-declare const gapi: any;
+//declare const gapi: any;
 
 describe('BaseComponent', () => {
   let component: BaseComponent;
@@ -25,13 +26,12 @@ describe('BaseComponent', () => {
 
   let FLEX_LAYOUT = ConstantService.FLEX_LAYOUT;
 
-  //let isSignedIn: boolean;
+  let isSignedIn: boolean;
   let windowRef: WindowRef;
 
 
 
   beforeEach(async(() => {
-    console.log("ding 1");
     let authServiceStub = {
       auth2: {}
     };
@@ -62,7 +62,6 @@ describe('BaseComponent', () => {
   }));
 
   beforeEach(() => {
-    console.log("Ding2");
     fixture = TestBed.createComponent(BaseComponent);
     component = fixture.componentInstance;
     //windowRef = new WindowRef();
@@ -73,11 +72,20 @@ describe('BaseComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should init', ()=>{
+  it('should initialize members', ()=>{
     console.log(component);
     let aNumber = 1;
     expect(component.displayText).toEqual('How can I help you?');
     expect(typeof component.navHeight).toBe(typeof aNumber);
-    //expect(component.window).toBe(null);
+  });
+
+  it('should have a side-nav component', () => {
+    fixture.detectChanges();//It does something weird without this line
+    let sideNav = fixture.debugElement.query(By.directive(MdSidenav));
+    expect(sideNav).not.toBe(null);
+  });
+
+  it('should be doing something', ()=>{
+    expect(true).toBeTruthy();
   });
 });

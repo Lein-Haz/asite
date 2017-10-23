@@ -1,0 +1,47 @@
+.pic-hard{
+  max-height: 300px;
+}
+.tile-home{
+  position: relative;
+  top: 0;
+  //width: 50%;
+  height: 200%;
+  margin: 0;
+}
+.hex-base{
+  //margin: 0 auto;
+  position: relative;
+  transform-origin: 50% 50%;
+  //width: 50%;
+
+  /*&:before{
+    content: '';
+    display: table;
+    float:left;
+    padding: 50% 0;
+  }*/
+  //transform: rotate(120deg);
+
+  div{
+    overflow: hidden;
+  }
+  overflow: hidden;
+}
+
+.hex-1{
+  //transform: rotate(-60deg);
+}
+
+.hex-2{
+  //transform: rotate(-60deg);
+}
+
+
+.something-specific{
+  height: 400px;
+  width: 400px;
+  margin: 0 auto;
+  //height: 100%;
+  //width: 100%;
+  background-color: black;
+}

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 
 @Component({
   selector: 'hex-tile',
@@ -7,10 +7,16 @@ import {Component, OnInit} from '@angular/core';
 })
 export class AHexTileComponent implements OnInit {
 
+  @Output() loadEmitter: EventEmitter<any> = new EventEmitter();
 
 
   constructor() {
 
+  }
+
+  loadCallbackEmitter($event){
+    console.log($event);
+    this.loadEmitter.emit($event);
   }
 
   ngOnInit() {

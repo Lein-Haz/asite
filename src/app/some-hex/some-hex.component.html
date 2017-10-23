@@ -3,6 +3,12 @@
     <div>{{thing}}</div>
   </div>
 </div>
-<div>
-  <hex-tile></hex-tile>
+<div fxLayout="row" fxLayoutAlign="start center" class="hex-row">
+  <div fxFlex>
+    <hex-tile (loadEmitter)="loadCallback($event)"></hex-tile>
+  </div>
+  <div fxFlex>
+    <hex-tile></hex-tile>
+  </div>
 </div>
+<span>&nbsp;</span>
